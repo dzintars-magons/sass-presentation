@@ -1,0 +1,78 @@
+@use '1-variables/variables' as *
+@use '2-mixins/px-to-rem-convert' as *
+@use '2-mixins/mediaqueries' as *
+
+// using css variables with fallbacks 
+// use like this : 
+// +var(font-size, fs-large)
+// this will give your css class both the value of the property , for example - font-size: 15px and its variable font-size: var(--fs-large)
+//It creates media queries for you
+
+@mixin var($property, $variable)
+    @if (not map-get($vars, $variable))
+        @error 'There is no such variable: #{$variable}. Please check your list of variables!'
+    @if (type-of(map-get($vars, $variable)) != 'map')
+        #{$property}: map-get($vars, $variable)
+        #{$property}: var(--#{$variable})
+    @else
+        @if (map-has-key($vars, $variable, "xs"))
+            #{$property}: map-get($vars, $variable, "xs")
+            #{$property}: var(--#{$variable})
+        @if (map-has-key($vars, $variable, "sm"))
+            @include sm-up
+                #{$property}: map-get($vars, $variable, "sm")
+                #{$property}: var(--#{$variable})
+        @if (map-has-key($vars, $variable, "md"))
+            @include md-up
+                #{$property}: map-get($vars, $variable, "md")
+                #{$property}: var(--#{$variable})
+        @if (map-has-key($vars, $variable, "xl"))
+            @include xl-up
+                #{$property}: map-get($vars, $variable, "xl")
+                #{$property}: var(--#{$variable})
+        @if (map-has-key($vars, $variable, "xxl"))
+            @include xxl-up
+                #{$property}: map-get($vars, $variable, "xxl")
+                #{$property}: var(--#{$variable})
+
+
+@mixin background-image-linear-gradient($from, $to) 
+    background-image: linear-gradient(180deg, map-get($vars, $from) 100%, map-get($vars, $to) 100%)
+    background-image: linear-gradient(180deg, var(--#{$from}) 100%, var(--#{$to}) 100%)
+
+%roboto-bold
+    +var(font-family, font-family)
+    +var(font-weight, fw-bold)
+
+.large-font-size
+    @extend %roboto-bold
+    +var(font-size, fs-large)
+.average-font-size
+    +var(font-family, font-family)
+    +var(font-weight, fw-thin)
+    +var(font-size, fs-average)
+    +var(line-height, small-line-height)
+    margin-bottom: 0
+.medium-font-size
+    @extend %roboto-bold
+    +var(font-size, fs-medium)
+    +var(line-height, small-line-height)
+    +var(color, secondary-font-color)
+.small-font-size
+    +var(font-family, font-family)
+    +var(font-size, fs-small)
+.small-line-height
+    +var(line-height, small-line-height)
+.semi-bold
+    font-weight: 700
+.white-text
+    +var(color, primary-bg)
+.font-weight-300
+    font-weight: 300 !important
+.font-weight-400
+    font-weight: 300 !important
+.highlight-text
+    +var(font-size, fs-highlight)
+
+        
+        
